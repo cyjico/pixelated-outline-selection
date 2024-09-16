@@ -1,0 +1,98 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows7.0</TargetFramework>
+		<RootNamespace>PDNPlugins</RootNamespace>
+		<Nullable>enable</Nullable>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<Deterministic>False</Deterministic>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<!-- Enable trimming -->
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+		<PdnRoot>C:\Program Files\paint.net</PdnRoot>
+		<StartAction>Program</StartAction>
+		<StartProgram>$(PdnRoot)\paintdotnet.exe</StartProgram>
+		<StartWorkingDirectory>$(PdnRoot)</StartWorkingDirectory>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="icon.png" />
+		<EmbeddedResource Include="help-content.rtf" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ComputeSharp.D2D1" Version="3.0.1" />
+		<PackageReference Include="ILRepack" Version="2.0.34">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.100-1.23067.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Be sure to set Private=False (aka CopyLocal=false) on the Paint.NET assemblies 
+         so they are not copied to the output folder -->
+		<Reference Include="PaintDotNet.Base">
+			<HintPath>$(PdnRoot)\PaintDotNet.Base.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.ComponentModel">
+			<HintPath>$(PdnRoot)\PaintDotNet.ComponentModel.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Core">
+			<HintPath>$(PdnRoot)\PaintDotNet.Core.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Effects.Core">
+			<HintPath>$(PdnRoot)\PaintDotNet.Effects.Core.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Effects.Gpu">
+			<HintPath>$(PdnRoot)\PaintDotNet.Effects.Gpu.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Fundamentals">
+			<HintPath>$(PdnRoot)\PaintDotNet.Fundamentals.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Framework">
+			<HintPath>$(PdnRoot)\PaintDotNet.Framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Primitives">
+			<HintPath>$(PdnRoot)\PaintDotNet.Primitives.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.PropertySystem">
+			<HintPath>$(PdnRoot)\PaintDotNet.PropertySystem.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Windows">
+			<HintPath>$(PdnRoot)\PaintDotNet.Windows.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Windows.Core">
+			<HintPath>$(PdnRoot)\PaintDotNet.Windows.Core.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PaintDotNet.Windows.Framework">
+			<HintPath>$(PdnRoot)\PaintDotNet.Windows.Framework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+
+	<Target Name="CopyToEffectsFolder" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+		<!-- Run VisualStudio as administrator -->
+		<Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(PdnRoot)\Effects\" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+	</Target>
+
+	<Target Name="DeleteDllWhenRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+		<Delete Files="$(PdnRoot)\Effects\$(TargetFileName)" Condition="Exists('$(PdnRoot)\Effects\$(TargetFileName)') " />
+	</Target>
+</Project>

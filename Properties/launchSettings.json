@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "pdn-plugins": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Program Files\\paint.net",
+      "remoteDebugEnabled": false
+    }
+  }
+}
